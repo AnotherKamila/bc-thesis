@@ -13,10 +13,10 @@ TOC:
 2. Specification  
    what do we want from the system?
 3. High-level Design  
-   specification => fun design choices => important decisions => overview of high-level structure
+   specification => fun design choices => important decisions => overview of high-level structure  
+   stuff for server & controller design (e.g. offline capabilities, fw updates, logging...)
 4. Controller <--> Server Protocol  
-   why => how  
-   => stuff for server & controller design (e.g. offline capabilities, fw updates, logging...)
+   why => how
 4. Server  
    1. Design  
       why
