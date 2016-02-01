@@ -3,6 +3,18 @@ Project Deadlock (Bachelor's Thesis)
 
 My Bachelor's Thesis: design and partial implementation of Project Deadlock.
 
+Goal
+----
+
+The goal of the thesis is to design and implement the server for the access control system Deadlock. The thesis should contain:
+- design of the server, which will manage the database of RFID card identifiers, mainly:
+  - server architecture,
+  - data structures for effective storing and processing of access rights,
+  - communication protocol with devices controlling access,
+  - solution for firmware updates for connected devices,
+  - access logging,
+- implementation in Python 3.
+
 Notes:
 ------
 
