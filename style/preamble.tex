@@ -1,0 +1,67 @@
+% Conform to the FMPH style
+
+% set margins
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3.5cm,right=2cm]{geometry}
+
+% adjust spacing between lines to 1.5
+\usepackage{setspace}
+\doublespacing
+\raggedbottom
+
+% fonts
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
+%\setromanfont[Scale=1.00,Ligatures={Common}]{Bitstream Charter}
+%Following line controls size of code chunks
+% \setmonofont[Scale=0.9]{Monaco}
+%Following line controls size of figure legends
+% \setsansfont[Scale=1.2]{Optima Regular}
+
+\usepackage{csquotes} % for \enquote (which will be used automatically for "quoted text" if pandoc's --smart is enabled
+
+% indentation
+\setlength\parindent{3em}
+\setlength\parskip{0pt}
+
+%Attempt to set math size
+%First size must match the text size in the document or command will not work
+%\DeclareMathSizes{display size}{text size}{script size}{scriptscript size}.
+\DeclareMathSizes{12}{13}{13}{13}
+
+% colors
+\usepackage{color}
+\definecolor{lightgray}{rgb}{0.7,0.7,0.7}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkgray}{rgb}{0.3,0.3,0.3}
+\definecolor{accent}{rgb}{0.15, 0.55, 0.82}
+\definecolor{red}{rgb}{1,0,0}
+
+% table of contents formatting
+\renewcommand{\contentsname}{Table of Contents}
+\setcounter{tocdepth}{3}
+
+% hyperlinks
+\usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black,
+}
+
+% Set figure legends and captions to be smaller sized sans serif font
+%\usepackage[font={footnotesize,sf}]{caption}
+
+% custom commands
+
+\newcommand{\TODO}[1]{\textbf{\color{red}{TODO #1}}}
+\newcommand{\myhrule}{%
+  \nointerlineskip \vspace{\baselineskip}
+  \hspace{\fill}{\color{lightgray}\rule{0.5\linewidth}{.5pt}}\hspace{\fill}
+  \par\nointerlineskip \vspace{\baselineskip}
+}
+\def\iff{if and only if }

@@ -38,3 +38,8 @@ TOC:
    future plans
 6. Conclusion  
    it's deployed, it rocks, we're awesome (hopefully)
+
+Templates and stuff
+-------------------
+
+Written in Markdown, compiled by Pandoc -- because I was sick of writing LaTeX but refused to have ugly typesetting. Template stolen from [github.com/tompollard/phd_thesis_markdown](https://github.com/tompollard/phd_thesis_markdown). Thesis LaTeX template for FMPH UK stolen from [compbio.fmph.uniba.sk/vyuka/bcinf](http://compbio.fmph.uniba.sk/vyuka/bcinf).
