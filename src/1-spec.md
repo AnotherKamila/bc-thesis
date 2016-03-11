@@ -1,7 +1,7 @@
 Specification {#spec}
 =============
 
-Project Deadlock aims to create a complete system to allow ISO/IEC 14443a-compatible cards (commonly known as *RFID cards*), such as International Student/Teacher Identification Cards, to be used to unlock doors and access other electronic appliances (hereafter *points of access*).
+Project Deadlock aims to create a complete system to allow ISO/IEC 14443a-compatible cards (commonly known as *RFID cards*), such as International Student/Teacher Identification Cards, to be used to unlock doors and access other electronic equipment (hereafter *points of access*).
 
 For this system to be useful at our university, Deadlock must meet the requirements outlined below.
 
@@ -9,15 +9,13 @@ For this system to be useful at our university, Deadlock must meet the requireme
 Reliability {#spec:reliability}
 -----------
 
-Points of access should be accessible even when things go wrong, specifically partial power or network outages must not make controllers stop allowing access nor lose access logs. Server failure must also cause no problems.
-
-Furthermore, allowing for a simple implementation of server failover would be a good idea.
+Points of access should be accessible even when things go wrong; specifically partial power or network outages must not make controllers stop allowing access nor lose access logs. Server failure must also cause no problems. Furthermore, the design and implementation should allow for a simple server failover mechanism.
 
 
 Security {#spec:security}
 --------
 
-As Deadlock may be used to protect valuable resources, such as computer rooms or labs, it must allow access if and only if it should.[^power] Logs or card IDs may be private, so they must not leak. Deadlock will be employed in publicly accessible places, meaning we cannot assume a private communication channel. Therefore all communication in both directions must be secret and authenticated.
+As Deadlock may be used to protect valuable resources, such as computer rooms or labs, it must allow access when and only when it should.[^power] Logs or card IDs may be private, so they must not leak. Deadlock will be employed in publicly accessible places, meaning we cannot assume a private communication channel. Therefore all communication in both directions must be secret and authenticated.
 
 [^power]: See \ref{spec:other:power-outage} for the discussion of power outages.
 
@@ -25,7 +23,7 @@ As Deadlock may be used to protect valuable resources, such as computer rooms or
 Extensibility {#spec:extensibility}
 -------------
 
-In order to be prepared for the future, and also to make incremental development possible, all software and all hardware must be modular, with well defined interfaces, and extensible.
+In order to be prepared for the future, and also to make incremental development possible, all software and all hardware must be modular, with well-defined interfaces, and extensible.
 
 Functions not implemented in the first iteration, but expected to be added in the future, are
 
@@ -37,18 +35,18 @@ Functions not implemented in the first iteration, but expected to be added in th
 Ease of development {#spec:ease-dev}
 -------------------
 
-In the future Deadlock will likely be developed and maintaned by students, not fulltime developers. Therefore the codebase must be simple, easy to understand and change, the tools and libraries must be easy to use, and the overhead of introducing a new developer to the project must be minimal.
+In the future Deadlock will likely be developed and maintained by students, not full-time developers. Therefore the codebase must be simple, easy to understand and change, the tools and libraries must be easy to use, and the overhead of introducing a new developer to the project must be minimal.
 
 
 Ease of use {#spec:ease-use}
 -----------
 
-Setting up access rules should be simple and convenient. Synchronization with the university's electronic information system is required, so that card info and groups like "CS teachers" or "PhD students" can be imported automatically.
+Setting up access rules should be simple and convenient. Synchronization with the university's electronic information system is required, so that card information and groups like "CS teachers" or "PhD students" can be imported automatically.
 
-It should bother a human \iff human intervention is required -- simple tasks and predictable issues should be handled automatically.
+The system should notify the operator if human intervention is required, but simple tasks and predictable issues should be handled automatically.
 
 
-Ease of deployment and maintenance {#ease-maintenance}
+Ease of deployment and maintenance {#spec:ease-maintenance}
 ----------------------------------
 
 Replacing any failed components should be quick and should not require substantial training.
@@ -71,7 +69,7 @@ Further considerations {#spec:other}
 
 ### Power outage behavior {#spec:other:power-outage}
 
-In case of a power outage, some doors should stay locked (to avoid the risk of breaching security), and some doors should open (e.g. emergency exits). While both can be supported, our use case requires only the "default close" behavior and therefore the current controller model is hard-wired for this case.
+In case of a power outage at access points, some doors should stay locked (to avoid the risk of breaching security), and some doors should open (e.g. emergency exits). While both can be supported, our use case requires only the "default close" behavior and therefore the current controller model is hard-wired for this case.
 
 ### Emergency open
 

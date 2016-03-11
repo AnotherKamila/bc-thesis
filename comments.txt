@@ -1,0 +1,179 @@
+(Poznámka: zdroják mojej bakalárky aj tento súbor sú na
+https://github.com/AnotherKamila/bc-thesis .)
+
+> Kostra práce ok. Textu je na prvý pohľad dosť veľa, ale je pomerne
+> rozťahaný veľkým riadkovaním a častými nadpismi. Je písaný pomerne
+> peknou angličtinou, ale miestami je príliš neformálny a tiež by bolo
+> dobre sa lepšie zamyslieť nad štruktúrou práce, dosť veľa vecí mi tam
+> chýba.
+
+S formálnosťou sa teda pokúsim niečo spraviť. Štruktúra nie je úplne triviálna,
+pretože hoci sa chcem zamerať na môj prínos, čiže server, myslím si, že treba
+poskytnúť dostatočný obraz o celom systéme a tom, prečo sme robili také
+rozhodnutia, aké sme robili. Takže je tam silný konflikt záujmov o čom veľa
+rozprávať, a teda o nejakých veciach nutne rozprávam primálo. Skúsim to ešte
+poriadne premyslieť.
+
+> Čo sa týka osnovy, Future plans sa v prípade, že nebudú príliš dlhé,
+> dajú vložiť aj do Conclusion. A tá šípočka v názve 3. kapitoly je
+> pomerne neštandardná.
+
+Šípočky som sa zbavila. Future plans budú dosť dlhé, keďže systém je
+rozšíriteľný preto, že si myslíme, že to bude treba a chcela by som
+porozprávať o tom, prečo to bude treba.
+
+> Chýba mi niekde aspoň stručný popis súčasného systému na fakulte a
+> prečo ho treba nahradiť a tiež príklady nejakých komerčných systémov
+> na podobné účely. Asi nie je ľahké o nich veľa zistiť, ale aspoň
+> nejaké základné údaje a v čom sa deadlock líši.
+
+Neviem úplne kam to napísať, tak som to dala úplne na začiatok Overview (ch. 2).
+
+> V úvode je naozaj potrebné jasne špecifikovať, ktoré časti si robila
+> prevažne ty a budeš o nich teda písať (samozrejme v prvých
+> kapitolách predstavíš celý systém, do ktorého tvoje časti zapadajú).
+
+Zmenila som piaty odstavec úvodu [bold časti sú nové] na:
+
+  This thesis first introduces the requirements/specification (chapter
+  \ref{spec}) and the high- level design choices we made to fulfill it (chapter
+  \ref{overview}). **These were developed jointly by the Student Development
+  Team.** We then focus on **the author's contribution**: the server/controller
+  communication protocol (chapter \ref{protocol}) and the server design and
+  implementation (chapter \ref{server}). Then we look at the future plans
+  (chapter \ref{future}).
+
+Stačí to tak?
+
+> V kapitole 1 mi veľmi chýba celkový popis, čo má deadlock vlastne
+> robiť. Veľmi zhruba by som predstavila základnú schému so serverom,
+> kontrolermi a čítačkami, správanie systému z hľadiska používateľa
+> otvárajúceho dvere, aké možnosti má mať rámcovo admin, čo je vlastne
+> uložené na rfid karte a pod.
+
+Schéma so serverom, controllermi a čítackami podľa mňa nepatria do špecifikácie,
+je jej dôsledkom (keďže takto vieme dosiahnuť jej splnenie). Chcem to teda dať
+až do Overview.
+
+> V kapitole 2 nie je jasné, ktorý hardvér je váš a ktorý
+> používate niečo existujúce (a čo). 
+
+Upresnila som.
+
+> V časti 2.3 sa dosť opakujú veci z kap. 1. a nie vždy sa k nim pridá
+> priveľa novej informácie o dizajne. Vedela by som si predstaviť aj
+> to, že kapitoly 1 a 2 sa spoja, nakoľko ide o opis celkového dizajnu
+> systému, do ktorého budeš robiť ty nejaké časti a ktorý je už aspoň
+> čiastočne hotový. Popíšeš jednotlivé časti systému a vysvetlíš, aké
+> výhody má váš design.  
+
+Podľa mňa má zmysel oddeliť "čo to má robiť" a "ako dosahujeme, aby to robilo
+to, čo to má robiť". 2.3 opakuje "čo to má robiť", aby som mohla vysvetliť,
+prečo to bolo netriviálne dosiahnuť. Takže by som to tak radšej nechala, pričom
+som sa viac rozkecala o tom, ako to dosahujeme (aby tam nebola iba opakujúca sa
+informácia).
+
+> V celom texte je veľa krátkych odstavcov. Odstavec by mal mať
+> spravidla viac ako jednu vetu a mnohé jednovetové odstavce sa ľahko
+> dajú pripojiť k predchádzajúcemu alebo nasledujúcemu
+> odstavcu. Napr. prvé tri odstavce úvodu sa dajú spojiť do jedného.
+
+OK, polepila som teda nejaké odstavce dokopy (a 3. kapitolu budem celú
+prepisovať).
+
+> Štvrtý odstavec úvodu je kostrbatý, prepísala by som ho na "Deadlock
+> is a project of Student Development Team at the Faculty Mathematics,
+> Physics and Informatics of Comenius University. It is implemented by
+> students and supervised by faculty members."
+
+Done.
+
+> v úvode a na začiatku kap.1 by som "appliances" nahradila "equipment"
+
+Done.
+
+> v 1.1 za "wrong" má byť bodkočiarka
+
+Done.
+
+> v 1.1 "would be a good idea" pomerne neformálne
+
+Done.
+
+> v 1.5 "info" je neformálne, má byť "information". "bother" tiež
+> veľmi neformálne. Spojenie "if and only if" sa zvykne používať iba v
+> matematických kontextoch, tu stačí napísať "only if" prípadne niečo
+> typu "The system should notify operator if human intervation is
+> required, but simple tasks and predictable issues ..."
+
+Done.
+
+> 1.6 má dosť veľký prekryv s 1.5, možno by ich bolo lepšie
+> spojiť. Podobne 1.8 by sa mohli pridať do 1.1 (možno by mohla ísť
+> prvá 1.2 a potom táto spojená 1.1.+1.8) s tým, že netreba na všetko
+> robiť podnadpis, stačí text rozumne rozdelený do odstavcov.
+
+Podľa mňa to nie je dobrý nápad. 1.6 a 1.5 sú rôzne veci, pretože zaujímajú
+rôzne množiny ľudí (človek píšuci pravidlá je niekto iný ako človek inštalujúci
+krabičky). Requirements v 1.5 a 1.6 môžu dokonca potenciálne byť konfliktné. 1.8
+a 1.1 sú tiež úplne rôzne veci, pretože 1.1 hovorí o tom, čo sa stane keď umrie
+server, 1.8 o tom, čo sa stane v prípade, že skape controller. Pre zozrejmenie
+som dopísala "In case of a power outage **at access points**". A chcem tam
+podnadpisy, nie len odstavce, pretože v 3. a 4. kapitole sa budem chcieť
+odvolávať na konkrétne veci.
+
+> 1.7. text nie je len o availability, ale aj o Low cost
+
+Low cost považujem za podmnožinu availability, pretože ak niečo stojí $400/unit
+(ako napríklad všetky komerčné systémy), podľa mňa to prakticky pre našu
+univerzitu nie je available.
+
+> úvod ku kap. 2: znak + by sa vo vete nemal vyskytovať, čo tak "user
+> interface for management and monitoring of the system"
+
+Done.
+
+> na obrázok sa treba odkazovať niekde v texte
+
+Na obrázok sa budem odkazovať len čo začne mať zmysel (alebo ho zmažem, ak
+nebude mať). Teraz tam v podstate je aby som vyskúšala, či mi fungujú obrázky.
+
+> 2.1.2 "pings" -> "contacts"
+
+Done.
+
+> 2.2 "can be grouped (even recursively)" vysvetli lepšie, čo to znamená
+
+Pridala som príklad:
+
+  e.g. "*CS students* := *Bachelor CS students* and *Master CS students*;
+  *staff* := *PhD students* and *faculty members*; *workdays* := Mon to Fri 8am
+  to 6pm; allow *CS students* and *staff* to access *computer rooms* on
+  *workdays*"
+
+Stačí tak?
+
+> 2.3.1 "Solved by..." toto nie je veta, chýba podmet aj prísudok. Má
+> byť "This is solved by..." Podobne v 2.3.3
+
+Done.
+
+-------------------------------------------------------------------------------
+
+Zmena okrem tohto: v 2.3 som sa trochu viac rozkecala, aby tam bolo niečo navyše.
+
+Problém s Deadlockom je, že za normálnych okolností by sme narazili na kopu
+netriviálnych problémov, ale vďaka dobrému dizajnu jednoducho nenastávajú. A
+potom to vyzerá, ako keby to bolo ľahké. Ale v skutočnosti je dobrý dizajn
+dôsledkom toho, že sme sa chceli vyhnúť problémom, a ľahké to nie je a ten dobrý
+dizajn nespadol z neba, bolo ho treba dobre vymyslieť. Ale toto tam nevidno a
+neviem, ako to odovzdať. Preto som tam aspoň dala sekciu "technical challenges",
+ale v skutočnosti to bez poriadneho zamyslenia ani z tej nevidno. Netuším, čo s
+tým...
+
+-------------------------------------------------------------------------------
+
+Mám ešte jeden nezávislý problém: Adam Dej by budúci rok zrejme tiež chcel ako
+bakalárku niečo s Deadlockom (robí reader a controller), ale zjavne intro, čiže
+kapitoly 1 a 2 by potreboval mať rovnaké ako ja. Ako sa toto dá riešiť? Miesto
+písania prehľadových kapitol len referencovať moju prácu? Ďakujem(e)!
