@@ -108,7 +108,11 @@ Faculty of Mathematics, Physics and Informatics
 ~
 
 \vfill
-\noindent\textbf{Acknowledgements:} \TODO{Jerry, Ostertág, Vinko, ŠVT/Adam, F za reviews?}
+\noindent\textbf{Acknowledgements:} I would like to thank RNDr. Jaroslav Janáček, PhD., RNDr. Richard Ostertág, PhD., and Mgr. Tomáš Vinař, PhD. for their valuable input on the design and requirements of the system. Without their insightful discussions, Deadlock would lack the strengths that make it unique, such as reliability and simplicity.
+
+I would also like to thank Adam Dej, who designed and is at the time of writing implementing the embedded devices. His input about what to expect from the controllers has been invaluable not only, but especially for the implementation phase.
+
+Finally, I would like to thank Michal Hanula and RNDr. Richard Královič, PhD. for listening and asking questions. They helped me to see things from a different viewpoint, which led to considerable improvements.
 
 % --- Koniec poďakovania
 
@@ -118,11 +122,18 @@ Faculty of Mathematics, Physics and Informatics
 \newpage
 \section*{Abstract}
 
-Abstract in the English language (translation of the abstract in the
-Slovak language).
+Project Deadlock is a system that controls access to a number of points of
+access (e.g. doors, appliances) using RFID cards. Deadlock is designed for
+security and reliability, assuming untrusted and unreliable network. It is fully open-source and open-hardware, and designed  to be flexible, maintainable, and cost-effective. It is easy to integrate with existing systems and customize to the needs of the user.
 
+This thesis first lists the requirements and introduces the high-level design choices we made in order to fulfill them.
+It then focuses on the design and implementation choices of some parts of the system.
+We start with the design and implementation of the server/controller communication protocol, focusing on the conflicting requirements of reliability, extensibility and simplicity.
+Next, we describe the access rules format and evaluation, especially the compromise of generality vs. user-friendliness.
+Third, we provide an overview of the server design and implementation, telling the tale of how good design choices and modularity led to a clean and simple implementation.
+We conclude with the future plans for Project Deadlock.
 
-\paragraph*{Keywords:}
+\paragraph*{Keywords:} access control, networked system design, network protocol design, reliable system design
 
 % --- Koniec Abstrakt - Anglicky
 
@@ -132,13 +143,11 @@ Slovak language).
 \newpage
 \section*{Abstrakt}
 
+Deadlock je systém na kontrolu prístupu do miestností alebo k zariadeniam na základe identifikáce RFID kartou. Je dizajnovaný s dôrazom na spoľahlivosť a bezpečnosť, predpokladajúc nezabezpečený a nespoľahlivý komunikačný kanál.
 
-Slovenský abstrakt v rozsahu 100-500 slov, jeden odstavec. Abstrakt
-stručne sumarizuje výsledky práce. Mal by byť pochopiteľný pre bežného
-informatika. Nemal by teda využívať skratky, termíny alebo označenie
-zavedené v práci, okrem tých, ktoré sú všeobecne známe.
+Táto práca sumarizuje dizajn systému a podrobne popisuje dizajn a implementáciu komunikačných protokolov, prístupových pravidiel a centrálneho servera.
 
-\paragraph*{Kľúčové slová:} jedno, druhé, tretie (prípadne štvrté, piate)
+\paragraph*{Kľúčové slová:} kontrola prístupu, dizajn distribuovaného systému, dizajn sieťového protokolu, dizajn spoľahlivého systému
 % --- Koniec Abstrakt - Slovensky
 
 

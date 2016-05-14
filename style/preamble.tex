@@ -20,9 +20,16 @@
 
 \usepackage{csquotes} % for \enquote (which will be used automatically for "quoted text" if pandoc's --smart is enabled
 
+\usepackage{rotating}
+
 % indentation
 \setlength\parindent{3em}
 \setlength\parskip{0pt}
+
+% titles format
+\usepackage{titlesec}
+\titleformat{\subsection}[runin]
+  {\normalfont\bfseries}{\thesubsection}{1em}{}[.]
 
 %Attempt to set math size
 %First size must match the text size in the document or command will not work
@@ -39,7 +46,11 @@
 
 % table of contents formatting
 \renewcommand{\contentsname}{Table of Contents}
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{1}
+
+% graphics options
+\graphicspath{{src/img/}}
+% \def\svgwidth{\columnwidth}
 
 % hyperlinks
 \usepackage{hyperref}
