@@ -11,6 +11,7 @@ Due to time constraints, the attached source code does not yet implement everyth
  - identity expressions precomputation is not incremental (\TODO{section})
  - the `CRITICAL` message handler is not implemented yet
  - command-line interface directly queries and modifies the database instead of contacting the HTTP API
+ - parts of the HTTP API are not implemented yet
 
 -------------------------------------------------------------------------
 

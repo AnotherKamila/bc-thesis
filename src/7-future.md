@@ -35,4 +35,4 @@ Tools and libraries that further ease deployment and integration should be provi
 A server implementation in Haskell
 ----------------------------------
 
-The current server implementation (in Python) is production-ready. However, the lack of compile-time type checking is a considerable weakness. The type system in Haskell is very strong, and therefore it can find bugs which would normally not be found at compile time. We believe that a Haskell implementation would be far more trustworthy, and intend to write one.
+The current server implementation (in Python) is production-ready. However, the lack of compile-time type checking is a considerable weakness. The type system in Haskell is very strong, and therefore it can give strong correctness guarantees. We believe that a Haskell implementation would be far more trustworthy, and intend to write one.

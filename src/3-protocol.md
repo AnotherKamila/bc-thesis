@@ -15,7 +15,7 @@ In order to keep the protocol simple, yet reliable, communication should be stat
 
 ### Simplicity
 
-The protocol should be simple. This includes not only simplicity in protocol implementation, but also simplicity in message parsing on any device and in any programming language. Specifically, parsing must be efficient on embedded devices with low CPU frequency and memory.
+The protocol should be simple. This includes not only low complexity of the protocol's states and messages, but also simplicity in message parsing on any device and in any programming language. Specifically, parsing must be efficient on embedded devices with low CPU frequency and memory.
 
 ### Extensibility
 
@@ -27,13 +27,13 @@ We do not want to rely on security mechanisms provided by lower layers (as they 
 
 ### Built on standard, well-known technologies
 
-Code is a liability. Our code has our bugs, requires specific knowledge, and is our problem. Therefore the protocol should require as little own code as possible.
+Code is a liability. Our code has our bugs, requires specific knowledge, and is our problem. Therefore the protocol should reuse existing code and technologies wherever appropriate.
 
 --------------------------------------------
 
 Note that fulfilling these requirements is not at all trivial, as some, especially extensibility vs. simplicity, or security vs. simplicity, may end up contradicting each other.
 
-Also, statelessness and idempotence are not strictly required, as reliability may be achieved in different ways, too. However, as shown in the following sections, statelessness is a very useful approach, as it allows to keep things simple even in the face of requirements that would otherwise need significant complexity.
+Statelessness and idempotence are not strictly required, as reliability may be achieved in different ways, too. However, as shown in the following sections, statelessness is a very useful approach, as it allows to keep things simple even in the face of requirements that would otherwise need significant complexity.
 
 Protocol design
 ---------------
@@ -69,13 +69,11 @@ A welcome consequence of the message independence and round-robin retries for al
 Network stack
 -------------
 
-The standard network stack is used: Ethernet (IEEE 802.3) as the physical and data link layers, IP as the network layer[^IP] and UDP as the transport layer. The server and controller IP addresses are configured statically on both sides.
+The standard network stack is used: Ethernet (IEEE 802.3) as the physical and data link layers, IP as the network layer and UDP as the transport layer. For IP, both IPv4 and IPv6 are supported, and standard ARP or NDP, respectively, is supported for network to link address resolution. IP addresses may be configured statically or obtained via DHCP.
 
-[^IP]: Both IPv4 and IPv6 are supported, and standard ARP or NDP, respectively, is supported for network to link address resolution. IP addresses may be configured statically or obtained via DHCP. 
+### UDP vs. TCP
 
-### UDP vs TCP
-
-As a standard TCP implementation is available for all devices we will use (it is even bundled with the real-time OS used for the embedded devices), it seems like using TCP would provide benefits at no additional cost. However, as our protocol is stateless and packet-oriented, and manages retransmissions on the application layer, the only benefit of TCP would in fact be unlimited "packet" length (as opposed to 64kB for UDP [@UDP]), and other than that we would end up emulating a UDP-like service on top of TCP if we chose to use it.
+A standard TCP implementation is available for all devices we will use (it is even bundled with the real-time OS used for the embedded devices). Therefore it seems like using TCP would provide benefits at no additional cost. However, as our protocol is stateless and packet-oriented, and manages retransmissions on the application layer, the only benefit of TCP would in fact be unlimited "packet" length (as opposed to 64kB for UDP [@UDP]), and other than that we would end up emulating a UDP-like service on top of TCP if we chose to use it.
 
 While the unlimited message size looks useful, it is in fact not that helpful -- the only messages that do not fit into a single UDP packet are rule database and firmware blobs, and for these it is more efficient to deliver them in explicit chunks, so that the transfer of these large files does not need to start over in case something goes wrong.
 
@@ -91,14 +89,14 @@ Controllers are expected to download a local copy of the rules database and quer
 
 As all communication must be initiated by the controller, it must periodically contact the server in order to find out if an updated rules database or firmware is available. 
 
-All responses have a response status tag, the value of which is one of `RESPONSE_OK`, `RESPONSE_ERR` (permanent error), `RESPONSE_TRY_AGAIN` (transient error). Any non-`OK` response must be treated as if the response did not arrive (i.e. usually a retry as in section \ref{protocol:overview} is necessary), except for possibly different timeouts, logging or scheduling. In the following, only `OK` responses are shown.
+All responses have a response status tag, the value of which is one of `OK`, `ERROR` (permanent error), `TRY_AGAIN` (transient error). Any non-`OK` response must be treated as if the response did not arrive (i.e. usually a retry as in section \ref{protocol:overview} is necessary), except for possibly different timeouts, logging or scheduling. In the following, only `OK` responses are shown.
 
-**Note:** The following details the "semantic" data types. The details of the encoding are specified in section \ref{protocol:cbor}. The type "byte string" represents a binary-safe string, or an array of bytes of arbitrary length.
+**Note:** The following describes the "semantic" data types. The details of the encoding are specified in section \ref{protocol:cbor}. The type "byte string" represents a binary-safe string, or an array of bytes of arbitrary length.
 
 Currently, the following message types are recognized:
 
 
-### `PING`: keepalive, DB and FW version info
+### `PING`: keepalive, DB and FW version info  {#protocol:ping}
 
 Contacts the server to report current status and request info about updates. Also used to adjust controller time.
 
@@ -128,7 +126,7 @@ The controller is expected to adjust its clock to match the server time.
 
 Sends access logs to the server.
 
-Controllers attempt to send access logs as soon as possible, but in order to not lose them, they are saved to the SD card until the server confirms they have been written to disk.[^capacity]
+Controllers attempt to send access logs as soon as possible, but in order to not lose them, they are saved to the SD card until the server confirms they have been written to disk.[^capacity] Logs may be sent in multiple batches if needed.
 
 [^capacity]: We recommend at least 4GB SD cards in order to have enough space for flash wear leveling. As each log record is about 20-30 bytes (depending on the encoding), at a rate of 1 access per second (which is somewhat overstated) it would take about 5 years to run out of space.
 
@@ -153,9 +151,9 @@ Table: `log_record` structure \label{table:log_record}
 **OK response:** All sent records have been written to disk. (Response body empty.)
 
 
-### `XFER`: transfer a file chunk
+### `XFER`: transfer a file chunk  {#protocol:xfer}
 
-Firmware and rule database updates are treated as opaque binary blobs by the `XFER` command. They are identified by type and version. In order to trivially support incremental downloading and also arbitrary chunk sizes, the controller explicitly requests the offset and length of the chunk. The same version must always refer to an exactly identical blob (if it exists), even if requested from a completely independent server.[^identical] The server may return a smaller chunk (e.g. because end of file was reached), but never longer. A chunk of length 0 indicates end of file.
+Firmware and rule database updates are treated as opaque binary blobs by the `XFER` command. They are identified by type and version. In order to trivially support incremental downloading and also arbitrary chunk sizes, the controller explicitly requests the offset and length of the chunk. The same version must always refer to an exactly identical blob (if it exists), even if requested from a completely independent server.[^identical] The server may return a smaller chunk, but never longer. A chunk of length 0 indicates end of file.
 
 [^identical]: This is implemented by using the file's 64-bit hash as version, but that is a detail irrelevant for the protocol, as versions should be treated as opaque integers.
 
@@ -164,7 +162,7 @@ Firmware and rule database updates are treated as opaque binary blobs by the `XF
 Field        Type     Description
 -----------  -------  -------------------------------------------------
 filetype     enum     `DB` and `FW` currently supported
-fileversion  integer  same version $=>$ same contents
+fileversion  integer  same version $\Rightarrow$ same contents
 offset       integer  offset from the beginning of the blob
 length       integer
 
@@ -197,7 +195,7 @@ message  optional text string  details of the error, if any
 
 Table: `CRITICAL` request
 
-Currently the only recognized code is `LOCK_FORCED_OPEN` (a physical lock was opened without permission), but we assume that more uses will emerge when preparing for real-world deployments.
+Currently the only recognized codes are `LOCK_FORCED_OPEN` (a physical lock was opened without permission) and `READER_NOT_RESPONDING` (a reader is not responding correctly even after multiple restarts), but we assume that more uses will emerge when preparing for real-world deployments.
 
 **OK response:** Acknowledged, action taken. (Response body empty.)
 
@@ -214,20 +212,20 @@ card_id     byte string  card that requested access
 
 Table: `ASK` request
 
-Whether access should be granted is a function of identity, time and the PoA's type. In this case, this card's identity, the current (server) time and the type of the PoA associated with this controller are used.
+Whether access should be granted is a function of identity, time and PoA (for details see chapter \ref{rules}). In this case, this card's identity, the current (server) time and the PoA associated with this controller are used.
 
 **OK response:**
 
 Field       Type         Description
 ----------  -----------  -------------------------------------------------
-allow       boolean      should we grant access?
+allowed     boolean      do we allow access?
 
 Table: `ASK OK` response
 
 
 ### `ECHOTEST`: echo for testing purposes
 
-Echoes the response body. This is helpful in integration testing. Live deployments are recommended to run a process that will act as a controller sending `ECHOTEST` (and possibly other) requests and report any problems. (Such a process is run by default -- see section \ref{deadaux}.)
+Echoes the request body. This is helpful in integration testing. Live deployments are recommended to run a process that will act as a controller sending `ECHOTEST` (and possibly other) requests and report any problems. (Such a process is run by default -- see section \ref{deadaux}.)
 
 
 Packet format
@@ -238,14 +236,14 @@ Packet format
 All requests and responses, as well as the outer packet envelope, are "records", i.e. small key-value mappings with fixed key names and types. Therefore we originally wanted to simply transmit "C structs" (i.e. binary blobs with fixed offsets for fields) and hard-code field offsets in the server and controller firmware. However, this approach has multiple disadvantages:
 
 - Any extension would be an incompatible change, and therefore would require the full upgrade procedure as described in section \ref{protocol:live-upgrades}. While this procedure is simple, when it is running, the system requires more servers to achieve the same level of redundancy; and it may make administrators nervous.
-- When parsing fails, we don't know anything more specific than "parsing failed".
-- Sometimes (e.g. when length was not fixed or did not change) we may parse a packet incorrectly without noticing.
-- The blob is not self-describing, and therefore it cannot be parsed correctly without the context of the outer envelope specifying the version and the description of fields for this version.
+- We may parse a packet incorrectly without noticing, if the length matches.
+- When the length does not match, we don't know anything more specific than "parsing failed".
+- The blob is not self-describing, and therefore nothing is known about it without the context of the outer envelope specifying the version and the description of fields for this version.
 
 Especially the concerns around parsing errors are significant enough to justify a self-describing encoding. Therefore we need an encoding with the following properties:
 
 - self-describing: key names and types must be present in the the encoded data
-- expressive: it must be possible to include all the necessary types and arbitrarily nest them as arrays or sub-records; fields must be optional
+- expressive: it must be possible to include all the necessary types and arbitrarily nest them as arrays or sub-records; optional fields must be supported
 - binary-safe: able to transmit arbitrary binary data (e.g. card IDs or file chunks) without the need for extra encoding
 - not incompatible by default: when a backwards-compatible change is introduced (such as adding a new optional field, or removing a field that was optional), old and new code must be able to communicate without change
 - suitable for embedded devices: encoding and decoding must be fast, using small code size and producing small messages
@@ -281,12 +279,12 @@ Controller ID
 :   Unique identifier of the sender or intended recipient. Serves as addressing. Including a form of addressing on the application layer decouples "logical" addressing from "physical" (i.e. network) addressing, thereby allowing Deadlock to function over NAT, with broadcast/multicast/anycast IP addresses, and such.
 
 Nonce
-:   Randomly generated bytes. Matches a response to a request: when a request nonce is $x$, the associated response's nonce must be $x \oplus 1$. Used as detailed in \ref{protocol:security}.
+:   Randomly generated bytes. Matches a response to a request: when a request nonce is $x$, the associated response's nonce must be $x \oplus 1$. Used as detailed in section \ref{protocol:security}.
 
 Payload
-:   Request/response, encoded according to section \ref{protocol:cbor}. Encrypted with the key for the given controller using the nonce, as detailed in \ref{protocol:security}.
+:   Request/response, encoded according to section \ref{protocol:cbor}. Encrypted with the key for the given controller using the nonce, as detailed in section \ref{protocol:security}.
 
-Note: Maximum message size (when encoded and encrypted) is 63kB (in order to comfortably fit into a UDP packet).
+**Note:** Maximum message size (when encoded and encrypted) is 63kB (in order to comfortably fit into a UDP packet).
 
 
 Security {#protocol:security}
@@ -298,7 +296,7 @@ Short of locking one's computer in a closet without electricity, the best way to
 
 In Deadlock, we assume operation over untrusted networks, and we must resist both passive and active attacks. Therefore we encrypt and authenticate all messages from/to a given controller with a device-specific symmetric key, using NaCl's `secret_box(nonce, key, payload)` function, which promises secrecy and integrity provided the nonce is not used more than once [@NaClDoc]. We construct the nonce by generating 24 random bytes,[^random] which ensures negligible collision probability (quick birthday paradox approximation says the probability reaches 50% after more than $10^{28}$ packets, which is a lot). Symmetric cryptography was chosen for performance, but once the actual controller hardware and firmware exists, we are planning to run benchmarks and switch to asymmetric cryptography if possible, in order to avoid the need to copy the secret to more than one place.
 
-The default NaCl primitives in NaCl are the Salsa20 stream cipher for symmetric encryption and the Poly1305 MAC for message authentication. As detailed in [@NaClCrypto], these are performant and secure without depending on any form of hardware acceleration, which goes well with our requirements. 
+The default NaCl primitives in NaCl are the Salsa20 stream cipher for symmetric encryption and the Poly1305 MAC for message authentication. As detailed in [@NaClCrypto], these are secure and performant without depending on any form of hardware acceleration, which goes well with our requirements. 
 
 [^random]: "Random" in this case does not mean cryptographically secure randomness -- nonces may be predictable (they are sent in cleartext along with the payload anyway), the only requirement is a uniform distribution to ensure low collision probability. The fact that NaCl does not require a source of good randomness is in embedded environments very welcome.
 
@@ -310,4 +308,4 @@ Provided a nonce is not used more than once, `secret_box(nonce, key, payload)` g
  - **integrity**: if a message is decrypted successfully, no accidental or purposeful third party modification of the nonce or the encrypted payload can have occurred;
  - **resistance to timing attacks**: the implementations try to always perform the same amount of work.
 
-Furthermore, the protocol's idempotence and use of nonces **prevents replay attacks**: if an attacker attempts to replay a request to a server, nothing bad will happen as all requests are idempotent; if she replays a response to a controller, its nonce will not match any of the requests the controller is currently expecting and therefore it will ignore the fake response.
+Furthermore, the protocol's idempotence and use of nonces **prevents replay attacks**: if an attacker attempts to replay a request to a server, nothing bad will happen as all requests are idempotent; if she replays a response to a controller, its nonce will not match any of the responses the controller is currently expecting and therefore it will ignore the fake response.

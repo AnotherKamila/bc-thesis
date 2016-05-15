@@ -4,7 +4,7 @@ System overview {#overview}
 Existing systems: overview and comparison {#overview:existing}
 -----------------------------------------
 
-The solution currently employed at the university, as well as most commercially available alternatives, consist of a number of simple card readers and a centralized decision-making server and access management interface. They usually require custom wiring; introduce vendor lock-in because of proprietary communication protocols; and cannot operate when the server is unavailable. In contrast, Deadlock will rely on standard, hopefully already existing infrastructure; provide the communication protocol specification and libraries to extend our system; and make sure Deadlock continues to operate when the server cannot be reached.
+The solution currently employed at the university, as well as most commercially available alternatives, consist of a number of simple card readers and a centralized decision-making server and access management interface. They usually require custom wiring; introduce vendor lock-in because of proprietary communication protocols; and cannot operate when the server is unavailable. In contrast, Deadlock will rely on standard, hopefully already existing infrastructure; provide the communication protocol specification and libraries to aid in extending the system; and make sure it continues to operate when the server cannot be reached.
 
 Existing commercial solutions are also expensive (usually several hundred dollars per unit) and because of vendor lock-in parts cannot be replaced by alternatives. Deadlock aims to be almost an order of magnitude cheaper, and fully open.
 
@@ -51,17 +51,18 @@ The controller is "almost stateless" -- logs are sent to the server, and rules a
 
 ### Reader
 
+The user-visible box at PoAs that reads RFID cards and provides visual and auditory feedback about whether access is granted.
 Up to two card readers may be attached to one controller. A library to interface with our readers is provided, so they can be used independently of our controller.
 
 ### Hardware
 
 The server is hardware-agnostic -- it runs on anything with networking and a Python environment. Deployments will usually use generic server hardware.
 
-ŠVT has designed and built custom hardware for the controllers and readers. They focused on making it available and future-proof, extensible, and cheap. The schematics and other documents are available in the Deadlock source repository [@src].
+The development team has designed and built custom hardware for the controllers and readers. They focused on making it available and future-proof, extensible, and cheap. The schematics and other documents are available in the Deadlock source repository [@src].
 
 In order to simplify installation, we have attempted to leverage existing infrastructure wherever possible: we use Ethernet for server/controller communication, adding optional Power over Ethernet, so we don't require any extra cables. Optionally, we can add a WiFi module to the controller for cases where electricity is available but connectivity is not. We even designed our reader boxes and connection cables to be easy to customize, so that they can be made compatible with existing holes in walls.[^customize]
 
-[^customize]: For example, instead of using an expensive mold for the reader boxes, we make them from several layers of Plexiglas that can be cut individually. The source files for the cut pattern are available and easy to modify.
+[^customize]: For example, instead of using an expensive cast for the reader boxes, we make them from several layers of Plexiglas that can be cut individually. The source files for the cut pattern are available and easy to modify.
 
 
 Access rules
@@ -74,15 +75,15 @@ Technical challenges
 
 ### Reliability
 
-As required by section \ref{requirements:reliability}, controllers must work during network failures. Continued operation is ensured by storing and evaluating the rules locally on the controller, and only needing the server for updating the local copy. Loss of access logs is avoided by saving them locally and never forgetting a log entry before it has been stored to disk by the server.
+As required by section \ref{requirements:reliability}, controllers must work during network failures. Continued operation is ensured by storing and evaluating the rules locally on the controller, and only needing the server for updating the local copy. Loss of access logs is avoided by saving them locally and until they have been stored to the server's hard drive.
 
 Multiple servers may be deployed for higher availability, as long as the backing database is synchronized by generic database replication mechanisms (eventual consistency is sufficient).
 
-See chapter \ref{protocol} for details.
+Most of the issues concerning reliability will be thoroughly addressed in chapter \ref{protocol}.
 
 ### Security
 
-See section \ref{protocol:security}.
+The security of the servers and controllers themselves is out of scope of this thesis. The security of the communication channel between these is addressed in section \ref{protocol:security}.
 
 ### Easy deployment and maintenance
 

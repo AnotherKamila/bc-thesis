@@ -32,6 +32,7 @@ pdf:
 	-V classoption=oneside \
 	-V papersize=a4paper \
 	-V documentclass=book \
+	-V link-citations=true \
 	-N \
 	--latex-engine=xelatex
 

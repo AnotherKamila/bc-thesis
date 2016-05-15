@@ -18,8 +18,8 @@ To facilitate this cooperation between high-level and low-level rules, and also 
 
 The low-level, internal rules must be generic enough to support any use case, yet easy to compile by both computers and humans.
 
-Rules format  {#rulefmt}
-------------------------
+Internal rules format  {#rulefmt}
+---------------------
 
 In order to cover all possible use cases, the straightforward approach is to allow access rules to be specified as any Boolean formula over identities, access points and time specifications. However, this brings the following problems:
 
@@ -36,7 +36,7 @@ The evaluation flow, as depicted in in figure \ref{fig:rule-eval}, is as follows
 
 1. Find this AP's type, select its rules.
 2. Select rules with matching time specification.
-3. Select rules with this ID in the rule's expression.
+3. Select rules with this identity in the rule's identity expression.
 4. Select the (single) rule with the highest priority.
 
 This selects a single rule, which unambiguously allows or denies access.
@@ -58,27 +58,27 @@ Implementing general Boolean formulas (e.g. using AND, OR and NOT operators) wou
 Splitting rule evaluation into identity expressions and time+place expressions means that rules are easier to evaluate: a human (or a computer) can evaluate the two independently, and "why does this happen" questions are easier to answer. Moreover, in this way classes of equivalence on inputs are easier to find, as in this model a single time+place rule matches a single identity expression instead of arbitrary combinations. This makes it practical to pre-compute some rules, and implement re-computing this incrementally on change.
 
 
-Answering access queries
-------------------------
+Quick access querying: "in expression" relation  {#rules:in_expr}
+-----------------------------------------------
 
 Typically, rules will be queried often (especially when creating local rules databases for controllers) and changed infrequently. Therefore we can save work and time by pre-computing some information. Currently, we assume that in a typical deployment there will be few rules and multi-level identity expressions. Therefore we pre-compute an "in identity expression" relation -- for every identity (i.e. for all leaves of the expressions) we climb the expression DAG and save the $(identity, expression)$ tuple when the identity is included by an expression (taking into account the INCLUDE/EXCLUDE operations). As the expressions are acyclic, whenever we need to INCLUDE/EXCLUDE a sub-expression, we can just wait until we've computed it, thereby computing everything once.
 
-An access query selects a single rule (and a single expression) via the mechanism described in \ref{rulefmt}, and then we just check whether an $(expression, identity)$ tuple exists to answer the query.
+In order to select the rule applicable for a given access query according to section \ref{rulefmt}, in step 3 we simply select rules where an $(expression, identity)$ tuple exists. Similarly, when creating the local database for controllers, only the flattened relation, not the original hierarchy, is used.
 
 When an identity expression changes, it is easy to incrementally re-compute only the affected parts: we simply search the DAG, re-computing nodes as we visit them.
 
-See section \TODO{} \ref{??} for notes on the implementation of re-computation.
+See section \ref{impl:fun:in_expr} for notes on the implementation of re-computation.
 
 
 Local evaluation on embedded devices
 ------------------------------------
 
-The local database copy on the controllers builds on this two-level approach of separating identity expressions and time specifications. Note that any embedded device serves a single point of access, and therefore the "where" part of the rules is already taken care of -- every accesspoint selects only rules belonging to its type.
+The local database copy on the controllers builds on this two-level approach of separating identity expressions and time specifications. Note that any controller serves a single point of access, and therefore the "where" part of the rules is already taken care of -- every point of access knows only about rules belonging to its type.
 
-The server provides a mechanism to re-create the local databases on rules change. The specific format of the local databases is out of scope of this thesis.
+The server provides a mechanism to notify the process responsible for local database creation on rules change. The specific format of the local databases is out of scope of this thesis.
 
 
 Integration with existing systems
 ---------------------------------
 
-As required by section \ref{??}, data may be imported from other systems, and transparently "patched" into access rules. This is done via an application that generates flat identity expressions of the form $X := [\textrm{INCLUDE}\; student_1, \textrm{INCLUDE}\; student_2, ...]$ for every group $X$ that needs to be imported. These groups are marked and considered to be primitives, and they may be modified only by creating a group $Y$ that INCLUDEs $X$ and further INCLUDEs or EXCLUDEs what needs to be "patched" in the imports.
+As required by section \ref{requirements:ease-use}, data may be imported from other systems, and transparently "patched" into access rules. This is done via an application that generates flat identity expressions of the form $X := [\textrm{INCLUDE}\; student_1, \textrm{INCLUDE}\; student_2, ...]$ for every group $X$ that needs to be imported. These groups are marked and considered to be primitives, and they may be modified only by creating a group $Y$ that INCLUDEs $X$ and further INCLUDEs or EXCLUDEs what needs to be adjusted in the imports. In this way when the underlying data changes, the "patches" will not be disturbed.
