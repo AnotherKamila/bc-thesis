@@ -3,7 +3,7 @@
 # Glossary
 
 access rule
-:   A function from $(identity, PoA, time)$ to $Allow$ or $Deny$ that defines whether to grant access to the given PoA. See chapter \ref{rules}.
+:   A function from $(\textit{identity}, \textit{PoA}, \textit{time})$ to $\textit{Allow}$ or $\textit{Deny}$ that defines whether to grant access to the given PoA. See chapter \ref{rules}.
 
 controller
 :   Controls its associated point of access (e.g. unlocks its door) based on the access rules. Communicates with the server.
@@ -15,7 +15,7 @@ controller
 :   Auxiliary jobs supporting tasks such as offline database creation.
 
 `deadserver`
-:   The Deadlock server that communicates with controllers.
+:   The Deadlock server process that communicates with controllers.
 
 PoA, point of access
 :   A door lock, a printer or any other device, access to which is controlled by a Deadlock controller.

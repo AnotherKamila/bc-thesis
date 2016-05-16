@@ -1,14 +1,8 @@
-@article{UDP,
-title={{RFC 768: User datagram protocol}},
-year={1980},
-author={Postel, Jon},
-journal={\url{https://tools.ietf.org/html/rfc768}}
-}
-
-@article{CBOR,
-  title={Concise Binary Object Representation (CBOR)},
-  author={Bormann, Carsten and Hoffman, Paul},
-  year={2013}
+@book{PrinciplesDesign,
+title={Principles of Computer System Design: An Introduction},
+author={Saltzer, Jerome H. and Kaashoek, M. Frans},
+year={2009},
+publisher={Morgan Kaufmann}
 }
 
 @incollection{NaClSecurity,
@@ -20,18 +14,12 @@ year={2012},
 publisher={Springer}
 }
 
-@misc{NaClDoc,
+@online{NaClDoc,
 title={{NaCl} reference},
 year=2013,
 author={Bernstein, Daniel J and Lange, Tanja and Schwabe, Peter},
-note = {\url{https://nacl.cr.yp.to/}}
-}
-
-@misc{src,
-title={Deadlock repositories},
-year=2016,
-author={{FMFI ŠVT}},
-note = {\url{https://github.com/fmfi-svt-deadlock/}}
+url={https://nacl.cr.yp.to/},
+urldate={2016-02-12}
 }
 
 @article{NaClCrypto,
@@ -41,31 +29,18 @@ author={Bernstein, Daniel J},
 journal={\url{https://cr.yp.to/highspeed/naclcrypto-20090310.pdf}}
 }
 
-@misc{PythonDoc,
-title={Python 3 Documentation},
-year=2015,
-author={{Python Software Foundation}},
-note = {\url{https://docs.python.org/3/}}
+@article{UDP,
+title={{RFC 768: User datagram protocol}},
+year={1980},
+author={Postel, Jon},
+journal={\url{https://tools.ietf.org/html/rfc768}}
 }
 
-@misc{PyNaClDoc,
-title={PyNaCl Documentation},
-year=2016,
-author={Donald Stufft and {individual contributors}},
-note = {\url{https://pynacl.readthedocs.io/}}
-}
-
-@misc{posix,
-title={{POSIX.1-2008}},
-year=2008,
-author={The {IEEE} and The Open Group},
-note = {\url{http://pubs.opengroup.org/onlinepubs/9699919799/}}
-}
-
-@article{fnv,
-  title={The FNV Non-Cryptographic Hash Algorithm},
-  author={Eastlake, Donald and Fowler, Glenn and Vo, Kiem-Phong and Noll, Landon},
-  year={2015}
+@article{CBOR,
+  title={Concise Binary Object Representation ({CBOR})},
+  author={Bormann, Carsten and Hoffman, Paul},
+  year={2013},
+  journal={\url{https://tools.ietf.org/html/rfc7049}}
 }
 
 @book{UllmanDB,
@@ -75,37 +50,70 @@ year={1984},
 publisher={Galgotia publications}
 }
 
-@misc{plpgsql,
+@online{plpgsql,
 title={{PL/pgSQL} reference},
 year=2016,
 author={{The {PostgreSQL} Global Development Group}},
-note = {\url{https://www.postgresql.org/docs/9.5/static/plpgsql.html}}
+url={https://www.postgresql.org/docs/9.5/static/plpgsql.html},
+urldate={2016-03-18}
 }
 
-@misc{pgnotify,
+@online{pgnotify,
 title={{PostgreSQL} Asynchronous Notification -- Documentation},
 year=2016,
-author={{The PostgreSQL Global Development Group}},
-note = {\url{https://www.postgresql.org/docs/9.5/static/libpq-notify.html}}
+author={{The {PostgreSQL} Global Development Group}},
+url={https://www.postgresql.org/docs/9.5/static/libpq-notify.html},
+urldate={2016-04-22}
 }
 
-@misc{pgrowlevel,
+@online{pgrowlevel,
 title={{PostgreSQL} Row Security Policies -- Documentation},
 year=2016,
-author={{The PostgreSQL Global Development Group}},
-note = {\url{https://www.postgresql.org/docs/9.5/static/ddl-rowsecurity.html}}
+author={{The {PostgreSQL} Global Development Group}},
+url={https://www.postgresql.org/docs/9.5/static/ddl-rowsecurity.html},
+urldate={2016-05-10}
 }
 
-@book{PrinciplesDesign,
-title={Principles of Computer System Design: An Introduction},
-author={Saltzer, Jerome H. and Kaashoek, M. Frans},
-year={2009},
-publisher={Morgan Kaufmann}
+@online{PythonDoc,
+title={Python 3 Documentation},
+year=2015,
+author={{Python Software Foundation}},
+url={https://docs.python.org/3/},
+urldate={2016-02-02}
+}
+
+@article{posix,
+title={{POSIX.1-2008}},
+year=2008,
+author={{The IEEE} and {The Open Group}},
+journal={\url{http://pubs.opengroup.org/onlinepubs/9699919799/}}
+}
+
+@article{fnv,
+  title={The {FNV} Non-Cryptographic Hash Algorithm},
+  author={Eastlake, Donald and Fowler, Glenn and Vo, Kiem-Phong and Noll, Landon},
+  year={2015}
 }
 
 @article{sse,
   title={Server-sent events},
   author={Hickson, Ian},
-  journal={W3C Working Draft WD-eventsource-20091222, latest version available at< http://www. w3. org/TR/eventsource},
+  journal={W3C Working Draft WD-eventsource-20091222, latest version available at \url{http://www.w3.org/TR/eventsource}},
   year={2009}
+}
+
+@online{PyNaClDoc,
+title={{PyNaCl} Documentation},
+year=2015,
+author={Donald Stufft and {individual contributors}},
+url={https://pynacl.readthedocs.io/},
+urldate={2015-12-01}
+}
+
+@online{src,
+title={Deadlock repositories},
+year=2016,
+author={{FMFI ŠVT}},
+url={https://github.com/fmfi-svt-deadlock/},
+urldate={2016-05-16}
 }

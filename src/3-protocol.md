@@ -1,6 +1,3 @@
-
-\TODO{fix page breaks in tables and after headings}
-
 Server/controller communication protocol {#protocol}
 ========================================
 
@@ -11,7 +8,7 @@ The server/controller communication protocol must facilitate reliability, securi
 
 ### Statelessness and idempotence
 
-In order to keep the protocol simple, yet reliable, communication should be stateless and all messages should be idempotent. This allows to simply retry anything that failed for any reason, at any time.
+In order to keep the protocol simple, yet reliable, communication should be stateless and all messages should be idempotent. This allows for retrying anything that failed for any reason, at any time.
 
 ### Simplicity
 
@@ -100,7 +97,9 @@ Currently, the following message types are recognized:
 
 Contacts the server to report current status and request info about updates. Also used to adjust controller time.
 
-**Request:**
+\clearpage
+
+**`PING` request:**
 
 Field       Type     Description
 ----------  -------  -------------------------------------------------
@@ -108,9 +107,7 @@ time        integer  what time the controller thinks it is
 db_version  integer  version of the rules database currently in use
 fw_version  integer  currently running firmware version
 
-Table: `PING` request
-
-**OK response:**
+**`PING OK` response:**
 
 Field       Type     Description
 ----------  -------  --------------------------------------------------
@@ -118,25 +115,21 @@ time        integer  server time
 db_version  integer  newest available version of the rules database
 fw_version  integer  newest available firmware version
 
-Table: `PING OK` response
-
 The controller is expected to adjust its clock to match the server time.
 
 ### `ALOG`: transfer access logs   {#protocol:alog}
 
 Sends access logs to the server.
 
-Controllers attempt to send access logs as soon as possible, but in order to not lose them, they are saved to the SD card until the server confirms they have been written to disk.[^capacity] Logs may be sent in multiple batches if needed.
+Controllers attempt to send access logs as soon as possible, but in order not to lose them, they are saved to the SD card until the server confirms they have been written to disk.[^capacity] Logs may be sent in multiple batches if needed.
 
 [^capacity]: We recommend at least 4GB SD cards in order to have enough space for flash wear leveling. As each log record is about 20-30 bytes (depending on the encoding), at a rate of 1 access per second (which is somewhat overstated) it would take about 5 years to run out of space.
 
-**Request:**
+**`ALOG` request:**
 
 Field       Type                  
 ----------  ------------------------------
 records     array[^array] of `log_record`s (defined in table \ref{table:log_record})
-
-Table: `ALOG` request
 
 [^array]: The array may end with a termination symbol instead of having an explicitly specified length. See section \ref{protocol:cbor} for details of the encoding.
 
@@ -148,80 +141,71 @@ allowed  boolean      was access granted?
 
 Table: `log_record` structure \label{table:log_record}
 
-**OK response:** All sent records have been written to disk. (Response body empty.)
+**`ALOG OK` response:** All sent records have been written to disk. (Response body empty.)
 
 
 ### `XFER`: transfer a file chunk  {#protocol:xfer}
 
-Firmware and rule database updates are treated as opaque binary blobs by the `XFER` command. They are identified by type and version. In order to trivially support incremental downloading and also arbitrary chunk sizes, the controller explicitly requests the offset and length of the chunk. The same version must always refer to an exactly identical blob (if it exists), even if requested from a completely independent server.[^identical] The server may return a smaller chunk, but never longer. A chunk of length 0 indicates end of file.
+Firmware and rule database updates are treated as opaque binary blobs by the `XFER` command. They are identified by type and version. In order to trivially support incremental downloading and arbitrary chunk sizes, the controller explicitly requests the offset and length of the chunk. The same version must always refer to an exactly identical blob (if it exists), even if requested from a completely independent server.[^identical] The server may return a smaller chunk, but never longer. A chunk of length 0 indicates end of file.
 
-[^identical]: This is implemented by using the file's 64-bit hash as version, but that is a detail irrelevant for the protocol, as versions should be treated as opaque integers.
+[^identical]: See section \ref{impl:fun:fileversion} for notes on how we implemented this. From the protocol's viewpoint, versions must be treated as opaque integers with this and only this guarantee.
 
-**Request:**
+**`XFER` request:**
 
 Field        Type     Description
 -----------  -------  -------------------------------------------------
 filetype     enum     `DB` and `FW` currently supported
-fileversion  integer  same version $\Rightarrow$ same contents
+fileversion  integer  same version $\implies$ same contents
 offset       integer  offset from the beginning of the blob
 length       integer
 
-Table: `XFER` request
+\clearpage
 
-**OK response:**
+**`XFER OK` response:**
 
 Field       Type         Description
 ----------  -----------  --------------------------------------------------
 length      integer      may be less than requested
 chunk       byte string  the file chunk contents
 
-Table: `XFER OK` response
-
 The server will return a `TRY_AGAIN` error if the file was not found. This would usually happen because one server already received and processed an update and another one is behind. The controller will simply retry until it finds a ready server.
 
-Note: These are the only responses longer than a few bytes. The server will send whatever size it is asked for (up to the generous packet size limit). It is each controller's responsibility to not ask for chunks that may result in replies that are too long for it to process. This is to allow maximum efficiency with controllers with different capabilities.
+Note: These are the only responses longer than a few bytes. The server will send whatever size it is asked for (up to the generous packet size limit). It is each controller's responsibility not to ask for chunks that may result in replies that are too long for it to process. This is to allow maximum efficiency with controllers with different capabilities.
 
 
-### `CRITICAL`: report a critical problem
+### `CRITICAL`: report a critical problem  {#protocol:critical}
 
 Used to report a critical problem, upon which the server should take immediate action.
 
-**Request:**
+**`CRITICAL` request:**
 
 Field    Type                  Description
 -------  --------------------  ----------------------------
 code     enum                  error code
 message  optional text string  details of the error, if any
 
-Table: `CRITICAL` request
-
 Currently the only recognized codes are `LOCK_FORCED_OPEN` (a physical lock was opened without permission) and `READER_NOT_RESPONDING` (a reader is not responding correctly even after multiple restarts), but we assume that more uses will emerge when preparing for real-world deployments.
 
-**OK response:** Acknowledged, action taken. (Response body empty.)
+**`CRITICAL OK` response:** Acknowledged, action taken. (Response body empty.)
 
 
 ### `ASK`: ask if access should be granted now
 
 Because of the potentially high latency of roundtrips, local evaluation rather than querying the server should be used in production. However, we include this for special cases and as a fallback.
 
-**Request:**
+**`ASK` request:**
 
 Field       Type         Description
 ----------  -----------  -------------------------------------------------
 card_id     byte string  card that requested access
 
-Table: `ASK` request
-
 Whether access should be granted is a function of identity, time and PoA (for details see chapter \ref{rules}). In this case, this card's identity, the current (server) time and the PoA associated with this controller are used.
 
-**OK response:**
+**`ASK OK` response:**
 
 Field       Type         Description
 ----------  -----------  -------------------------------------------------
 allowed     boolean      do we allow access?
-
-Table: `ASK OK` response
-
 
 ### `ECHOTEST`: echo for testing purposes
 
@@ -249,9 +233,9 @@ Especially the concerns around parsing errors are significant enough to justify 
 - suitable for embedded devices: encoding and decoding must be fast, using small code size and producing small messages
 - standard, with existing libraries: our code is our problem -- the less code we write, the less code we will need to maintain in the future
 
-These requirements are perfectly fulfilled by the Concise Binary Object Representation (CBOR, see [@CBOR]) -- a data format designed for communicating with constrained nodes. We use arrays of CBOR semantically tagged items to represent records.[^duplicate] (These are equivalent to arrays of $(tag, data)$ pairs, where $data$ is strongly typed.) Unknown tags are ignored and from the parsing viewpoint all fields are optional. In this way the only thing that a server and a controller must have in common to communicate are the tag interpretations (which makes sense, if they want to use the values for something useful).
+These requirements are perfectly fulfilled by the Concise Binary Object Representation (CBOR, see [@CBOR]) -- a data format designed for communicating with constrained nodes. We use arrays of CBOR semantically tagged items to represent records.[^duplicate] (These are equivalent to arrays of $(\textit{tag}, \textit{data})$ pairs, where $\textit{data}$ is strongly typed.) Unknown tags are ignored and from the parsing viewpoint all fields are optional. In this way the only thing that a server and a controller must have in common to communicate are the tag interpretations (which makes sense, if they want to use the values for something useful).
 
-[^duplicate]: If a duplicate tag is encountered, it is considered an error. In addition to serving as a sanity check, this might also prevent some overflow-related attacks.
+[^duplicate]: If a duplicate tag is encountered, it is considered an error. In addition to serving as a sanity check, this might prevent some overflow-related attacks.
 
 
 ### Requests, responses {#protocol:requests-responses}

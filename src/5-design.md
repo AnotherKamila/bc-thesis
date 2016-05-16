@@ -15,20 +15,19 @@ The following sections give an overview of the data the server works with.
 
 For each access point, we store its type, optional description, and which controller is attached to it.
 
-Access logs (with data as specified in the message, according to section \ref{protocol:alog}) are written to disk on insert. In order to fulfill the protocol idempotence guarantee, only logs with a unique combination of attributes are stored.
+Access logs (with data as specified in the message, according to section \ref{protocol:alog}) are saved in the database.[^ondisk] In order to fulfill the protocol idempotence guarantee, only logs with a unique combination of attributes are stored.
+
+[^ondisk]: As the database journal is flushed to disk on commit, the logs are on long-term storage by the time we send an `OK` response to the controller.
 
 Data about the state of the controllers, in particular the time of last PING, the rules database version, the firmware version and the local time (to measure drift) are stored (see section \ref{protocol:ping}). Other parts of the system, such as monitoring or a management UI, may use this information as they see fit (e.g. to alert if a controller has been silent for too long or is out of date).
 
 ### Access rule specification and identities management
 
-\TODO{this is fun}
+Identities and  expressions form a DAG as described in section \ref{rulefmt:identityexpr}. We represent this by storing the edges (marked by the INCLUDE or EXCLUDE operation), and the nodes (containing a reference to either an identity, or a sub-expression) in the database.
 
-\TODO{in\_expr}
+In addition, we compute the "in expression" relation as described in section \ref{rules:inexpr}. See section \ref{impl:inexpr} for the description of the implementation.
 
-Normally, the access rules will be queried often and changed only occasionally. Therefore, it is beneficial to partly pre-compute the queries on rules change, in order to answer more efficiently. To do this, 
-
-
-
+The access rules are stored as a relation on the PoA types, identity expressions, time specifications, priority, and $\{\textit{Allow}, \textit{Deny}\}$. Time specifications may contain a list of weekdays, a date range, and a time of day, and these function as masks -- when unspecified, they match any weekday/date/time. Operations (such as union/intersection) on these masks are not supported -- this should instead be done by creating several rules with appropriate priorities.
 
 
 Main components
@@ -49,9 +48,9 @@ Listens for controller requests on a UDP socket, and sends responses according t
 
 Provides the HTTP API used by the web management and monitoring interface, and the provided commandline interface. Thereby bridges the outside world and the database via a simple CRUD REST API.
 
-Supports pushing events via a streamed long-running HTTP response, in accordance with the Server-sent events/Eventsource specification [@sse]. Events are triggered via the LISTEN/NOTIFY pub/sub mechanism in Postgres [@pgnotify], and the database in turn contains triggers that send a NOTIFY on certain table row changes. Therefore data changes can bubble all the way to clients, which can use the standard Eventsource API to subscribe to these.
+It supports pushing events via a streamed long-running HTTP response, in accordance with the Server-sent events/Eventsource specification [@sse]. Events are triggered via the LISTEN/NOTIFY pub/sub mechanism in Postgres [@pgnotify], and the database in turn contains triggers that send a NOTIFY on certain table row changes. Therefore data changes can bubble all the way to clients, which can use the standard Eventsource API to subscribe to these.
 
-Provides a quick way to stage firmware updates: a firmware image together with a list of controller IDs can be uploaded, and `deadapi` simply drops (or links) the file into subfolders dedicated to the given controllers (see section \ref{design:cfiles}).
+It provides a quick way to stage firmware updates: a firmware image together with a list of controller IDs can be uploaded, and `deadapi` simply drops (or links) the file into subfolders dedicated to the given controllers (see section \ref{design:cfiles}).
 
 
 ### `deadaux`: auxiliary jobs supporting the other components  {#deadaux}

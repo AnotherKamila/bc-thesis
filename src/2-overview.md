@@ -6,7 +6,7 @@ Existing systems: overview and comparison {#overview:existing}
 
 The solution currently employed at the university, as well as most commercially available alternatives, consist of a number of simple card readers and a centralized decision-making server and access management interface. They usually require custom wiring; introduce vendor lock-in because of proprietary communication protocols; and cannot operate when the server is unavailable. In contrast, Deadlock will rely on standard, hopefully already existing infrastructure; provide the communication protocol specification and libraries to aid in extending the system; and make sure it continues to operate when the server cannot be reached.
 
-Existing commercial solutions are also expensive (usually several hundred dollars per unit) and because of vendor lock-in parts cannot be replaced by alternatives. Deadlock aims to be almost an order of magnitude cheaper, and fully open.
+Existing commercial solutions are expensive (usually several hundred dollars per unit) and because of vendor lock-in parts cannot be replaced by alternatives. Deadlock aims to be almost an order of magnitude cheaper, and fully open.
 
 <!-- \TODO{comparison with specific models} -->
 <!-- not really -->
@@ -56,7 +56,7 @@ Up to two card readers may be attached to one controller. A library to interface
 
 ### Hardware
 
-The server is hardware-agnostic -- it runs on anything with networking and a Python environment. Deployments will usually use generic server hardware.
+The server is hardware-agnostic -- it runs on anything with networking and a Python environment. Deployments are expected to use generic server hardware.
 
 The development team has designed and built custom hardware for the controllers and readers. They focused on making it available and future-proof, extensible, and cheap. The schematics and other documents are available in the Deadlock source repository [@src].
 
@@ -79,7 +79,7 @@ As required by section \ref{requirements:reliability}, controllers must work dur
 
 Multiple servers may be deployed for higher availability, as long as the backing database is synchronized by generic database replication mechanisms (eventual consistency is sufficient).
 
-Most of the issues concerning reliability will be thoroughly addressed in chapter \ref{protocol}.
+Most of the issues concerning reliability will be thoroughly addressed in chapter\ \ref{protocol}.
 
 ### Security
 
@@ -90,3 +90,7 @@ The security of the servers and controllers themselves is out of scope of this t
 Due to requirements in sections \ref{requirements:ease-maintenance} and \ref{requirements:availability}, communication is built on standard Ethernet, and we support the Power over Ethernet standard. Adding and replacing devices must be quick and easy, and therefore we made sure it was possible to pre-configure devices and then just plug in as needed.
 
 Deadlock must be usable decades from now, therefore it must depend only on components, libraries and tools which are likely to stay. This requirement needed to be taken into account when designing the hardware and software.
+
+### Scalability
+
+Deadlock should scale to 

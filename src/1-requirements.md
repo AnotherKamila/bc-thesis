@@ -13,11 +13,11 @@ As Deadlock may be used to protect valuable resources, such as computer rooms or
 
 ### Reliability {#requirements:reliability}
 
-Points of access should be accessible even when things go wrong; specifically partial power or network outages must not prevent the system from allowing access, nor cause loss of access logs. Temporary server failure must also cause no problems. Furthermore, the design and implementation should allow for a simple failover mechanism.
+Points of access should be accessible even when things go wrong; specifically partial power or network outages must not prevent the system from allowing access, nor cause loss of access logs. Temporary server failure must cause no problems. Furthermore, the design and implementation should allow for a simple failover mechanism.
 
 ### Security {#requirements:security}
 
-Deadlock must not allow illegitimate access. Also, to protect privacy, logs or card IDs must not leak. We cannot assume a private communication channel. Therefore all communication in both directions must be authenticated and kept confidential.
+Deadlock must not allow illegitimate access. To protect privacy, logs or card IDs must not leak. We cannot assume a private communication channel. Therefore all communication in both directions must be authenticated and kept confidential.
 
 [^power]: See section \ref{requirements:other:power-outage} for the discussion of behavior during power outages.
 
@@ -29,7 +29,7 @@ Deadlock must be an effective solution for our use case. This must hold even if 
 
 ### Extensibility {#requirements:extensibility}
 
-In order to be prepared for the future, and also to make incremental development possible, all software and all hardware must be modular, with well-defined interfaces, and extensible.
+In order to be prepared for the future, and to make incremental development possible, all software and all hardware must be modular, with well-defined interfaces, and extensible.
 
 Functions not implemented in the first iteration, but expected to be added in the future, are
 
@@ -51,7 +51,7 @@ The system should notify the operator if human intervention is required, but sim
 
 ### Ease of deployment and maintenance {#requirements:ease-maintenance}
 
-Deployment should be simple and with minimal overhead. On the hardware side, it should be possible to leverage existing infrastructure in order to not need extra cables for communication or power. On the software side, importing data from existing sources (such as our university's Academic Information System) should be possible. Replacing any failed components should be quick and should not require substantial training. The system should check its state and automatically fix whatever can be fixed automatically, e.g. reboot a device if it gets locked up.
+Deployment should be simple and with minimal overhead. On the hardware side, it should be possible to leverage existing infrastructure in order not to need extra cables for communication or power. On the software side, importing data from existing sources (such as our university's Academic Information System) should be possible. Replacing any failed components should be quick and should not require substantial training. The system should check its state and automatically fix whatever can be fixed automatically, e.g. reboot a device if it gets locked up.
 
 ### Availability {#requirements:availability}
 
